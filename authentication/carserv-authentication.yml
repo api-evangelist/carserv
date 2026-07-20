@@ -1,0 +1,60 @@
+generated: '2026-07-20'
+method: derived
+source: >-
+  https://github.com/CarServ/public_api_client —
+  lib/carserv/public_api/client/authenticator.rb,
+  lib/carserv/public_api/client/config.rb,
+  lib/carserv/public_api/client/resources/base.rb
+notes: >-
+  Derived from the first-party Ruby client, not from an OpenAPI definition —
+  CarServ never published a machine-readable spec and the developer site is gone.
+  The model is a two-legged key/secret token exchange that returns a JWT, which is
+  then sent as a bearer token on every JSON:API request. Not OAuth 2.0: there is no
+  authorization endpoint, no scopes, no refresh token and no grant_type parameter,
+  so no scopes/ artifact is produced.
+summary:
+  types:
+  - http
+  bearer_format: JWT
+  api_key_in:
+  - body
+  oauth2_flows: []
+  scopes_supported: false
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  in: header
+  header: Authorization
+  value_format: 'Bearer <jwt>'
+  applied_to: all Public API resource requests
+  sources:
+  - https://github.com/CarServ/public_api_client
+token_exchange:
+  method: POST
+  path: /public/api/v2/access_token.json
+  request_content_type: application/json
+  request_body_fields:
+  - name: key
+    description: CarServ API key issued to the integrating account
+  - name: secret
+    description: CarServ API secret paired with the key
+  response_field: jwt
+  description: >-
+    Credentials are exchanged for a JWT which the client caches (the reference
+    client caches it in Redis under access_token_<api_key>) and replays as a
+    bearer token.
+token_lifecycle:
+  caching: client-side, keyed on the API key
+  refresh_trigger: >-
+    A 401 Not Authorized on any resource request causes the client to request a
+    new access token and retry once before surfacing the error.
+  expiry_published: false
+credentials:
+  issuance: private — issued by CarServ to integrating accounts; no public self-serve signup
+  rotation_policy_published: false
+status: discontinued
+status_note: >-
+  The authentication host is no longer resolvable; carserv.com is a parked domain.
+  This profile documents the historical contract as shipped in the client library.
