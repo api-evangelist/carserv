@@ -1,0 +1,69 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  Wayback Machine CDX history for carserv.com, live WHOIS/DNS for carserv.com,
+  and https://github.com/CarServ/public_api_client
+notes: >-
+  CarServ is no longer operating. The evidence below is recorded because a dead
+  provider is a valid, useful catalog result — not because a lifecycle programme
+  was published. No status page, no deprecation policy, no SLA and no changelog
+  ever existed, so no StatusPage or Deprecation pointer is wired.
+versioning:
+  scheme: uri-path
+  current: v2
+  evidence: base path /public/api/v2/ in the first-party client
+  policy_published: false
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  evidence: No Sunset/Deprecation header handling in the client; no policy page found.
+sla:
+  url: null
+  published: false
+status_page: null
+status_page_published: false
+changelog:
+  url: null
+  published: false
+lifecycle_stage: discontinued
+shutdown_evidence:
+- observation: Site served HTTP 410 Gone
+  dates: ['2024-11-14', '2024-12-28']
+  source: Wayback Machine CDX (carserv.com)
+- observation: Site began redirecting (301), then resolved to a parked lander (200)
+  dates: ['2025-07-10', '2025-09-04']
+  source: Wayback Machine CDX (carserv.com)
+- observation: >-
+    Domain re-registered 2024-04-06 under Domains By Proxy and delegated to
+    NS1/NS2.AFTERNIC.COM — a domain-resale parking service; every path returns the
+    same 114-byte HTML stub redirecting to /lander.
+  source: WHOIS + live probe
+- observation: >-
+    Null MX record ("0 .") and SPF "v=spf1 -all" — the domain explicitly accepts
+    and sends no mail, consistent with a parked, non-operating domain.
+  source: live DNS
+- observation: >-
+    Last archived live marketing site titled "CarServ - The operating system for
+    auto repair".
+  date: '2023-10-01'
+  source: https://web.archive.org/web/20231001222859/https://www.carserv.com/
+- observation: >-
+    Company GitHub organization github.com/CarServ remains public but every
+    repository is dormant; the only first-party repo, public_api_client, was last
+    pushed 2023-03-16.
+  source: GitHub API
+surviving_surface:
+  github_org: https://github.com/CarServ
+  sdk_repo: https://github.com/CarServ/public_api_client
+  developer_portal: null
+  documentation: null
+deprecated_operations: []
+unrelated_domains:
+- domain: carserv.co
+  note: >-
+    An unrelated "CarServ - AI-Powered Vehicle Inspection Platform" resolves at
+    carserv.co, but that domain was created 2025-10-02 — well after this company
+    shut down — and shows no link to the Techstars-backed CarServ. Recorded here
+    only to prevent future conflation; it is not treated as a successor.
+  source: WHOIS carserv.co

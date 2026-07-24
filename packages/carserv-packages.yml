@@ -1,0 +1,53 @@
+generated: '2026-07-20'
+method: searched
+source: https://github.com/CarServ/public_api_client
+notes: >-
+  Registry sweep found no CarServ package on RubyGems, npm, PyPI, Maven Central,
+  NuGet, pkg.go.dev, Packagist or crates.io. The one first-party client library
+  is distributed as source (and as a built .gem file) from the company GitHub
+  organization only — the README instructs users to install the local
+  carserv_public_api_client-0.0.1.gem rather than pull from RubyGems.
+registry_checks:
+- registry: rubygems
+  query: carserv_public_api_client
+  status: not_found
+- registry: rubygems
+  query: carserv
+  status: no_results
+- registry: npm
+  query: carserv
+  status: no_results
+- registry: pypi
+  query: carserv
+  status: not_found
+packages:
+- language: ruby
+  registry: github
+  name: carserv_public_api_client
+  version: 0.0.1
+  url: https://github.com/CarServ/public_api_client
+  install: gem install ./carserv_public_api_client-0.0.1.gem
+  license: MIT
+  official: true
+  authors: Carserv Engineering
+  contact: support@carserv.com
+  published_to_registry: false
+  required_ruby_version: '> 3.1'
+  dependencies:
+  - faraday (>= 0.15.2, < 2.0)
+  - json_api_client (1.21.0)
+  - redis (~> 4.2.5)
+  covers_resources:
+  - appointment
+  - customer
+  - inspection
+  - labor
+  - operation
+  - other
+  - part
+  - repair_order
+  - repair_shop
+  - service_advisor
+  - sublet
+  - technician
+  - vehicle

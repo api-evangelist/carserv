@@ -1,0 +1,53 @@
+generated: '2026-07-20'
+method: derived
+source: >-
+  https://github.com/CarServ/public_api_client —
+  lib/carserv/public_api/client/resources/base.rb,
+  lib/carserv/public_api/client/errors/rate_limit_error.rb
+format: json:api-errors
+notes: >-
+  Not RFC 9457 — the API predates problem+json adoption here and the client is a
+  json_api_client subclass, so errors arrive as JSON:API error objects. The five
+  statuses below are the ones the first-party client explicitly handles, which is
+  the only error contract CarServ ever published. Titles and client behaviour are
+  taken verbatim from the library; no error catalogue page survives on the web.
+envelope:
+  wire_format: JSON:API errors array
+  client_normalised_shape: '{ status: <int>, message: <string> }'
+problems:
+- status: 401
+  title: Not Authorized!
+  exception: JsonApiClient::Errors::NotAuthorized
+  cause: Missing, expired or invalid bearer JWT.
+  remediation: >-
+    Re-exchange the API key and secret at /public/api/v2/access_token.json for a
+    fresh JWT and retry. The client refreshes and retries once automatically.
+  retryable: true
+- status: 404
+  title: Not Found!
+  exception: JsonApiClient::Errors::NotFound
+  cause: The requested resource id does not exist or is out of the caller's scope.
+  remediation: Verify the resource id; do not retry.
+  retryable: false
+- status: 408
+  title: Request Timeout!
+  exception: JsonApiClient::Errors::RequestTimeout
+  cause: The upstream request exceeded the server timeout.
+  remediation: Retry once after a short delay; the client waits 5 seconds.
+  retryable: true
+- status: 429
+  title: Too Many Requests!
+  exception: Carserv::PublicApi::Client::Errors::RateLimitError
+  cause: The caller exceeded the (unpublished) request rate allowance.
+  remediation: >-
+    Back off and retry. The client escalates 30s, then 60s, then 180s before
+    surfacing the error. No Retry-After header is read, so none appears to have
+    been sent.
+  retryable: true
+- status: 500
+  title: Internal Server Error!
+  exception: JsonApiClient::Errors::InternalServerError
+  cause: Unhandled server-side failure.
+  remediation: Do not retry; escalate to support@carserv.com.
+  retryable: false
+status: discontinued

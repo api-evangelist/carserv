@@ -1,0 +1,45 @@
+# CarServ
+
+> CarServ was auto repair shop management software — "the operating system for auto repair" — covering repair orders, digital vehicle inspections, customer communication and payments for single-site and multi-location repair groups. It was backed by Techstars. **The company is no longer operating**: carserv.com served HTTP 410 Gone in late 2024 and is now a registrar parking page. This profile documents the historical API surface, reconstructed from the company's own open-source client library, which is the only first-party technical artifact that survives.
+
+## Status
+
+- Lifecycle stage: discontinued
+- Last archived live site: 2023-10-01
+- Surviving first-party surface: the GitHub organization and its Ruby client gem
+- No developer portal, API documentation, OpenAPI definition, status page, changelog or compliance page exists
+
+## API surface (historical)
+
+CarServ published a read-only "Public API" v2:
+
+- Wire format: JSON:API 1.0 (`json_api_client` 1.21.0)
+- Base path: `/public/api/v2/` — the production host is not recoverable and is deliberately not guessed
+- Auth: POST an API `key` + `secret` to `/public/api/v2/access_token.json`, receive a `jwt`, replay it as `Authorization: Bearer <jwt>`
+- Query conventions: `filter[...]`, `page`, and JSON:API `include` compound documents
+- Errors: JSON:API error objects; the client handles 401, 404, 408, 429, 500
+- Rate limiting: HTTP 429 with no published limits or `Retry-After`; the client backs off 30s / 60s / 180s
+- Every resource exposes only `list` and `fetch` — there were no documented write operations
+
+Resources: repair_order, customer, vehicle, appointment, inspection, operation, part, labor, sublet, other, repair_shop, service_advisor, technician.
+
+## Source code
+
+- [public_api_client](https://github.com/CarServ/public_api_client): first-party Ruby client gem (v0.0.1, MIT) for the CarServ Public APIs — never published to RubyGems
+- [CarServ GitHub organization](https://github.com/CarServ): 11 public repositories, 10 of them forks of Angular/Rails tooling
+
+## Artifacts in this profile
+
+- [Packages](packages/carserv-packages.yml): the one first-party SDK plus the registry sweep that found nothing published
+- [Authentication](authentication/carserv-authentication.yml): the key/secret to JWT bearer contract
+- [Conventions](conventions/carserv-conventions.yml): pagination, filtering, includes, errors, rate-limit backoff
+- [Error catalog](errors/carserv-problem-types.yml): the five statuses the client handled
+- [Data model](data-model/carserv-data-model.yml): 13 entities and 27 relationships derived from the client
+- [Conformance](conformance/carserv-conformance.yml): JSON:API and JWT yes; OAuth 2.0, RFC 9457, OpenAPI, AsyncAPI no
+- [Lifecycle](lifecycle/carserv-lifecycle.yml): the shutdown evidence trail
+- [Domain security](security/carserv-domain-security.yml): TLS/DNS probe of the now-parked domain
+- [Well-known](well-known/carserv-well-known.yml): probe showing the parked domain's misleading soft-200 responses
+
+## Note for agents
+
+Do not attempt to call this API — there is no live host. Do not confuse this company with the unrelated "CarServ" vehicle-inspection product at carserv.co, whose domain was registered in October 2025, after this company shut down.

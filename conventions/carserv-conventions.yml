@@ -1,0 +1,96 @@
+generated: '2026-07-20'
+method: derived
+source: >-
+  https://github.com/CarServ/public_api_client —
+  lib/carserv/public_api/client/resources/*.rb,
+  lib/carserv/public_api/client/errors/rate_limit_error.rb, README.md
+notes: >-
+  Cross-cutting semantics derived from the first-party Ruby client. The client is
+  built on json_api_client 1.21.0, so the wire format is JSON:API 1.0 and the
+  query conventions below are the JSON:API standard ones the server must have
+  honoured.
+base_path: /public/api/v2/
+media_type: application/vnd.api+json
+request_content_type: application/json
+authentication:
+  style: bearer JWT obtained from a key/secret exchange
+  header: 'Authorization: Bearer <jwt>'
+  artifact: authentication/carserv-authentication.yml
+idempotency:
+  supported: false
+  evidence: >-
+    No idempotency key header, parameter or retention window appears anywhere in
+    the client library, and the published surface is read-only (list/fetch), so
+    there is no write path that would need one. No Idempotency pointer is wired.
+pagination:
+  style: page-number
+  params:
+  - name: page
+    description: 1-based page number; the client defaults to page 1
+  - name: items_per_page
+    description: Client-side page size, default 50 (Config::DEFAULT_ITEMS_PER_PAGE)
+  default_page_size: 50
+filtering:
+  style: JSON:API filter family
+  param_pattern: 'filter[<field>]'
+  examples:
+  - resource: customer
+    fields: [business_name, email, first_name, last_name, phone_number, is_fleet]
+  - resource: repair_order
+    fields: [closed_at]
+    note: 'closed_at is a range filter — filter[closed_at][from] / filter[closed_at][to]'
+  - resource: appointment
+    fields: [customer_id]
+  - resource: vehicle
+    fields: [customer_id]
+  - resource: inspection
+    fields: [job_id, job_number]
+  - resource: operation
+    fields: [job_id, job_number]
+field_expansion:
+  style: JSON:API compound documents
+  param: include
+  description: >-
+    Related resources are side-loaded rather than expanded in place. The client
+    requests includes on fetch — e.g. a repair_order fetch includes appointment,
+    customer, vehicle, repair_shop, service_advisor, technician and inspections;
+    an operation list includes parts, labors, sublets and others.
+sparse_fieldsets:
+  supported: unknown
+  evidence: not exercised by the client library
+metadata:
+  supported: unknown
+  evidence: not exercised by the client library
+request_tracing:
+  request_id_header: none documented
+versioning:
+  scheme: uri-path
+  current: v2
+  evidence: base path /public/api/v2/
+error_envelope:
+  format: json:api-errors
+  description: >-
+    Errors surface as JSON:API error objects. The reference client normalises them
+    to a {status, message} hash for 401, 404, 408, 429 and 500.
+  artifact: errors/carserv-problem-types.yml
+rate_limit_signaling:
+  status_code: 429
+  published_limits: false
+  headers_documented: none
+  client_backoff:
+    description: >-
+      The client implements fixed-interval retry on 429 rather than reading a
+      Retry-After header, which suggests the server published no retry hint.
+    intervals_seconds: [30, 60, 180]
+    max_attempts: 3
+retries:
+  '401': refresh the access token and retry once
+  '408': retry once after 5 seconds
+  '429': back off 30s / 60s / 180s, then give up
+  '500': no retry
+write_support:
+  supported: false
+  evidence: >-
+    Every resource in the client exposes only list and fetch — the published API
+    surface is read-only.
+status: discontinued

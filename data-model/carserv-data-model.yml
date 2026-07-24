@@ -1,0 +1,208 @@
+generated: '2026-07-20'
+method: derived
+source: >-
+  https://github.com/CarServ/public_api_client —
+  lib/carserv/public_api/client/resources/*.rb (belongs_to declarations,
+  includes() calls and instance accessors) and README.md usage examples
+notes: >-
+  Entity graph derived from the first-party Ruby client rather than from OpenAPI
+  $refs, since no spec was published. Relationships are taken from explicit
+  json_api_client belongs_to declarations, from the include sets the client
+  requests, and from the accessors the README demonstrates. Attribute lists are
+  limited to fields the client actually filters on — the full attribute set was
+  never published and is not guessed here.
+domain: auto repair shop management (repair orders, digital vehicle inspections)
+entities:
+- name: repair_order
+  aka: RO / job
+  description: Central work record for a vehicle service visit; the hub of the model.
+  known_attributes:
+  - name: id
+  - name: closed_at
+    note: range-filterable (from/to)
+  - name: total
+    note: exposed as an accessor on the fetched record
+  aliases_in_filters: [job_id, job_number]
+- name: customer
+  description: Person or business that owns the vehicle being serviced.
+  known_attributes:
+  - name: id
+  - name: first_name
+  - name: last_name
+  - name: business_name
+  - name: email
+  - name: phone_number
+  - name: is_fleet
+- name: vehicle
+  description: Vehicle attached to a customer and serviced under a repair order.
+  known_attributes:
+  - name: id
+  - name: customer_id
+- name: appointment
+  description: Scheduled visit that precedes or accompanies a repair order.
+  known_attributes:
+  - name: id
+  - name: customer_id
+- name: inspection
+  description: Digital Vehicle Inspection performed against a repair order.
+  known_attributes:
+  - name: id
+- name: operation
+  description: A unit of work on a repair order; parent of its cost line items.
+  known_attributes:
+  - name: id
+- name: part
+  description: Parts line item on an operation.
+- name: labor
+  description: Labor line item on an operation.
+- name: sublet
+  description: Outsourced work line item on an operation.
+- name: other
+  description: Miscellaneous charge line item on an operation.
+- name: repair_shop
+  description: Shop location; scopes staff and repair orders in multi-location groups.
+- name: service_advisor
+  description: Staff member who advises the customer, scoped to a repair shop.
+- name: technician
+  description: Staff member who performs the work, scoped to a repair shop.
+relationships:
+- from: repair_order
+  to: repair_shop
+  type: belongs_to
+  via: repair_shop
+  evidence: 'RepairOrder belongs_to :repair_shop, shallow_path: true'
+- from: repair_order
+  to: customer
+  type: has_one
+  via: customer
+  evidence: fetch includes(:customer); README repair_order.customer
+- from: repair_order
+  to: vehicle
+  type: has_one
+  via: vehicle
+  evidence: fetch includes(:vehicle); README repair_order.vehicle
+- from: repair_order
+  to: appointment
+  type: has_one
+  via: appointment
+  evidence: fetch includes(:appointment); README repair_order.appointment
+- from: repair_order
+  to: service_advisor
+  type: has_one
+  via: service_advisor
+  evidence: fetch includes(:service_advisor); README repair_order.service_advisor
+- from: repair_order
+  to: technician
+  type: has_one
+  via: technician
+  evidence: fetch includes(:technician); README repair_order.technician
+- from: repair_order
+  to: inspection
+  type: has_many
+  via: inspections
+  evidence: fetch includes(:inspections); README repair_order.inspections
+- from: repair_order
+  to: operation
+  type: has_many
+  via: operations
+  evidence: 'RepairOrder#operations filters Operation by filter[job_id] = id'
+- from: customer
+  to: repair_order
+  type: belongs_to
+  via: repair_order
+  evidence: 'Customer belongs_to :repair_order, shallow_path: true'
+- from: customer
+  to: vehicle
+  type: has_many
+  via: vehicles
+  evidence: fetch includes(:vehicles); README customer.vehicles
+- from: customer
+  to: appointment
+  type: has_many
+  via: appointments
+  evidence: fetch includes(:appointments)
+- from: customer
+  to: repair_order
+  type: has_many
+  via: jobs
+  evidence: fetch includes(:jobs); README customer.jobs
+- from: vehicle
+  to: repair_order
+  type: belongs_to
+  via: repair_order
+  evidence: 'Vehicle belongs_to :repair_order, shallow_path: true'
+- from: vehicle
+  to: customer
+  type: has_one
+  via: customer
+  evidence: list and fetch includes(:customer)
+- from: appointment
+  to: customer
+  type: belongs_to
+  via: customer
+  evidence: 'Appointment belongs_to :customer, shallow_path: true'
+- from: appointment
+  to: vehicle
+  type: has_one
+  via: vehicle
+  evidence: includes(:vehicle)
+- from: appointment
+  to: repair_shop
+  type: has_one
+  via: repair_shop
+  evidence: includes(:repair_shop)
+- from: appointment
+  to: service_advisor
+  type: has_one
+  via: service_advisor
+  evidence: includes(:service_advisor)
+- from: appointment
+  to: technician
+  type: has_one
+  via: technician
+  evidence: includes(:technician)
+- from: inspection
+  to: repair_order
+  type: belongs_to
+  via: repair_order
+  evidence: 'Inspection belongs_to :repair_order, shallow_path: true'
+- from: operation
+  to: repair_order
+  type: belongs_to
+  via: repair_order
+  evidence: 'Operation belongs_to :repair_order, shallow_path: true'
+- from: operation
+  to: part
+  type: has_many
+  via: parts
+  evidence: list includes(%i[parts labors sublets others]); README operations.first.parts
+- from: operation
+  to: labor
+  type: has_many
+  via: labors
+  evidence: list includes(%i[parts labors sublets others])
+- from: operation
+  to: sublet
+  type: has_many
+  via: sublets
+  evidence: list includes(%i[parts labors sublets others])
+- from: operation
+  to: other
+  type: has_many
+  via: others
+  evidence: list includes(%i[parts labors sublets others])
+- from: service_advisor
+  to: repair_shop
+  type: belongs_to
+  via: repair_shop
+  evidence: 'ServiceAdvisor belongs_to :repair_shop, shallow_path: true'
+- from: technician
+  to: repair_shop
+  type: belongs_to
+  via: repair_shop
+  evidence: 'Technician belongs_to :repair_shop, shallow_path: true'
+id_conventions:
+  style: integer surrogate ids
+  evidence: 'README fetch(id: 123); RepairOrder#operations casts id.to_i'
+  prefixed_ids: false
+status: discontinued

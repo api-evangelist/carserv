@@ -1,0 +1,68 @@
+generated: '2026-07-20'
+method: derived
+source: >-
+  https://github.com/CarServ/public_api_client (gemspec dependencies, resource
+  classes) plus live DNS/TLS probes of carserv.com
+notes: >-
+  Standards conformance derived from the first-party client, since no OpenAPI,
+  no developer portal and no compliance page survive. No published certification
+  or compliance programme was found anywhere, so no Compliance pointer is wired.
+standards:
+- id: jsonapi-1.0
+  conforms: true
+  evidence: >-
+    Client is a JsonApiClient::Resource subclass pinned to json_api_client 1.21.0,
+    and uses the JSON:API filter, page and include query families plus compound
+    documents.
+- id: jwt-rfc7519
+  conforms: true
+  evidence: Token exchange returns a `jwt` field replayed as an Authorization bearer token.
+- id: http-bearer-rfc6750
+  conforms: true
+  evidence: 'Authorization: Bearer <jwt> on every resource request.'
+- id: oauth2
+  conforms: false
+  evidence: >-
+    Key/secret POST returning a JWT with no grant_type, authorization endpoint,
+    scopes or refresh token — a proprietary exchange, not RFC 6749.
+- id: oidc
+  conforms: false
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: Errors are JSON:API error objects, not application/problem+json.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: >-
+    well-known/carserv-well-known.yml — no genuine security.txt; the domain is
+    parked and answers every path with an HTML stub.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation header handling in the client; no deprecation policy published.
+- id: rate-limiting-429
+  conforms: true
+  evidence: >-
+    Server returns 429; client implements escalating backoff. No Retry-After or
+    RateLimit-* header is read, so signalling is status-code only.
+- id: openapi
+  conforms: false
+  evidence: No OpenAPI or Swagger definition was ever published.
+- id: asyncapi
+  conforms: false
+  evidence: No event, streaming or webhook surface documented.
+- id: idempotency
+  conforms: false
+  evidence: conventions/carserv-conventions.yml — no idempotency key; read-only surface.
+- id: dnssec
+  conforms: false
+  evidence: security/carserv-domain-security.yml
+- id: dmarc
+  conforms: false
+  evidence: security/carserv-domain-security.yml
+compliance_programme:
+  published: false
+  certifications: []
+  evidence: >-
+    No trust centre, SOC 2, ISO 27001, PCI DSS or HIPAA claim found; probe of
+    trust/security/compliance paths returned nothing (probe-security-programs.py
+    reported trust=none).
+status: discontinued

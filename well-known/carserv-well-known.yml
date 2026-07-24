@@ -1,0 +1,32 @@
+generated: '2026-07-20'
+method: probed
+source: live fetches of https://carserv.com/.well-known/*
+host: https://carserv.com
+notes: >-
+  No .well-known discovery surface exists. carserv.com is now a registrar parking
+  page (Afternic name servers) that answers EVERY path with a 200-status HTML
+  redirect stub to /lander, so the raw HTTP status is misleading. Each probe below
+  records both the transport status and whether the body was a real document.
+  Nothing here is a genuine well-known document, so no WellKnown or SecurityTxt
+  pointer is wired into apis.yml.
+documents:
+- path: /.well-known/security.txt
+  status: 200
+  genuine: false
+  reason: parking-lander HTML stub (114 bytes, Content-Type text/html), not RFC 9116 text
+- path: /.well-known/openid-configuration
+  status: 200
+  genuine: false
+  reason: parking-lander HTML stub, not OIDC discovery JSON
+- path: /.well-known/oauth-authorization-server
+  status: 200
+  genuine: false
+  reason: parking-lander HTML stub, not RFC 8414 JSON
+- path: /.well-known/api-catalog
+  status: 200
+  genuine: false
+  reason: parking-lander HTML stub, not RFC 9727 catalog
+- path: /.well-known/ai-plugin.json
+  status: 200
+  genuine: false
+  reason: parking-lander HTML stub, not a plugin manifest

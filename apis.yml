@@ -1,19 +1,52 @@
 aid: carserv
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/carserv.png
 name: CarServ
-description: CarServ is a company surfaced as a portfolio company of techstars and added to the API Evangelist
-  network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  CarServ was auto repair shop management software — marketed as "the operating
+  system for auto repair" — used by single-site shops and multi-location repair
+  groups to run repair orders, Digital Vehicle Inspections, technician and service
+  advisor workflows, customer communication and payments. The company was backed by
+  Techstars. It is no longer operating: carserv.com returned HTTP 410 Gone through
+  late 2024 and now resolves to a registrar parking page delegated to Afternic name
+  servers. CarServ shipped a read-only JSON:API v2 "Public API" covering repair
+  orders, customers, vehicles, appointments, inspections, operations and their part,
+  labor and sublet line items, authenticated by exchanging an API key and secret for
+  a JWT bearer token. No OpenAPI definition, developer portal or documentation
+  survives; this profile reconstructs the historical API contract from the company's
+  own open-source Ruby client library, which remains public on GitHub.
 url: https://raw.githubusercontent.com/api-evangelist/carserv/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - techstars
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: historical
+x-tier-reason: company-defunct-api-reconstructed-from-first-party-sdk
+x-status: defunct
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-20'
 tags:
 - Company
+- Automotive
+- Auto Repair
+- Shop Management
+- Vehicle Inspection
+- Field Service
+- SaaS
+- JSON API
+- Defunct
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -23,3 +56,32 @@ maintainers:
 common:
 - type: Website
   url: https://carserv.com/
+- type: GitHubOrganization
+  url: https://github.com/CarServ
+- type: SourceCode
+  url: https://github.com/CarServ/public_api_client
+- type: Packages
+  url: packages/carserv-packages.yml
+- type: SDKs
+  url: packages/carserv-packages.yml
+- type: Authentication
+  url: authentication/carserv-authentication.yml
+- type: Conventions
+  url: conventions/carserv-conventions.yml
+- type: ErrorCatalog
+  url: errors/carserv-problem-types.yml
+- type: DataModel
+  url: data-model/carserv-data-model.yml
+- type: Conformance
+  url: conformance/carserv-conformance.yml
+- type: Lifecycle
+  url: lifecycle/carserv-lifecycle.yml
+- type: DomainSecurity
+  url: security/carserv-domain-security.yml
+- type: LLMsTxt
+  url: llms/carserv-llms.txt
+x-enrichment:
+  date: '2026-07-20'
+  status: enriched
+  artifacts_added: 10
+  pass: local-v1
