@@ -1,0 +1,21 @@
+# Front Door AI Index — carserv — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: carserv
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: carserv.com
+  final_host: carserv.com
+  ownership: own
+  owner: carserv
+  shares_host_with: null
+  inherited_from: null
+  verdict: thin
+  score: null
+  host_score: null
+  density: null
+  words: 0
+  tiers: null
+  ambiguous: null
+  top_terms: null
